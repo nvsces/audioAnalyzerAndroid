@@ -2,14 +2,14 @@
 
     <string name="app_name">Spectrogram</string>
     <string name="app_subtitle">Realtime FFT analysis</string>
-	
+
     <!-- Menu -->
     <string name="menu_main_item_settings">Settings</string>
-    
+
     <!-- View headers -->
     <string name="view_header_time">Frame length: %1$s ms</string>
     <string name="view_header_frequency">Resolution: %1$d\nWindow: %2$s</string>
-    
+
     <!-- Preferences -->
     <string-array name="preferences_fft_resolutions_values">
         <item>32</item>
@@ -26,7 +26,7 @@
         <item>65536</item>
         <!-- <item>131072</item>
         <item>262144</item> -->
-     </string-array>
+    </string-array>
     <string-array name="preferences_window_type_values">
         <item>Rectangular</item>
         <item>Triangular</item>
@@ -48,33 +48,47 @@
         <item>Grey</item>
         <item>Rainbow</item>
     </string-array>
-    
+
     <string name="preferences_category_processing">Processing</string>
     <string name="preferences_category_rendering">Rendering</string>
     <string name="preferences_category_system">System</string>
-    
+
     <string name="preferences_fft_resolution_title">FFT resolution</string>
     <string name="preferences_fft_resolution_default_value">1024</string>
     <string name="preferences_window_type_title">Window type</string>
     <string name="preferences_window_type_default_value">Hamming</string>
-    
+
     <string name="preferences_frequency_scale_title">Frequency scale</string>
     <string name="preferences_frequency_scale_default_value">Linear</string>
-    
+
     <string name="preferences_color_scale_title">Color scale type</string>
     <string name="preferences_color_scale_default_value">Fire</string>
-    
+
     <string name="preferences_keep_screen_on_title">Keep screen on</string>
     <string name="preferences_keep_screen_on_summary">Prevent screen from going to sleep</string>
     <string name="preferences_night_mode_title">Night mode</string>
     <string name="preferences_night_mode_summary">Enable night mode</string>
-    
-    
+
+
     <!-- Preferences configuration -->
     <string-array name="preferences_configuration">
-		<item>string</item><item>summary</item><item>fft_resolution</item><item>%s</item>
-		<item>string</item><item>summary</item><item>window_type</item><item>%s window</item>
-	    <item>string</item><item>summary</item><item>frequency_scale</item><item>%s</item>
-		<item>string</item><item>summary</item><item>color_scale</item><item>%s</item>
-	</string-array>
+        <item>string</item>
+        <item>summary</item>
+        <item>fft_resolution</item>
+        <item>%s</item>
+        <item>string</item>
+        <item>summary</item>
+        <item>window_type</item>
+        <item>%s window</item>
+        <item>string</item>
+        <item>summary</item>
+        <item>frequency_scale</item>
+        <item>%s</item>
+        <item>string</item>
+        <item>summary</item>
+        <item>color_scale</item>
+        <item>%s</item>
+    </string-array>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

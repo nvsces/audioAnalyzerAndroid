@@ -53,24 +53,18 @@ class ContinuousRecord
      * @param listener is call every time a sample is ready
      */
 
-    open interface OnBufferReadyListener {
-        fun onBufferReady(buffer: ShortArray)
-    }
-    fun start( listener: OnBufferReadyListener) {
+    fun start(function:(recordBuffer:ShortArray)->Unit) {
         if (!run && audioRecord != null) {
             run = true
-            //Log.d("ContinuousRecord","Starting service...");
             audioRecord!!.startRecording()
             val recordBuffer = ShortArray(recordLength)
             thread = Thread {
                 while (run) {
                     audioRecord!!.read(recordBuffer, 0, recordLength)
-                 //   Log.d("TEST",recordBuffer[0].toFloat().toString())
-                    listener.onBufferReady(recordBuffer)
+                    function(recordBuffer)
                 }
             }
             thread!!.start()
-            //Log.d("ContinuousRecord","Service started");
         }
     }
 

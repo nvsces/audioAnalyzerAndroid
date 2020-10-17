@@ -100,6 +100,6 @@ object Misc {
         return getPreference(activity, key, def)
     }
 
-    val activity: Activity?
+    var activity: Activity? = null
         get() = getAttribute("activity") as Activity?
 }

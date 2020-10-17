@@ -14,22 +14,26 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.example.kotlin_audioanalyzer.R
+import com.example.kotlin_audioanalyzer.utils.checkqq
+import com.example.kotlin_audioanalyzer.utils.etalonRun
+import kotlinx.android.synthetic.main.main.*
 import net.galmiza.android.engine.sound.SoundEngine
 import java.text.DecimalFormat
 import java.util.*
+import kotlin.collections.ArrayList
 
 
 @Suppress("DEPRECATED_IDENTITY_EQUALS")
 class SpectrogramActivity : AppCompatActivity() {
     // Attributes
     private var actionBar: ActionBar? = null
-//    private var frequencyView: FrequencyView? = null
+    private lateinit var frequencyView: FrequencyViews
     private lateinit var timeView: TimeView
     private var recorder: ContinuousRecord? = null
     private lateinit var nativeLib: SoundEngine
     private var menu: Menu? = null
     private val samplingRate = 44100
-    private var fftResolution = 0
+    private var fftResolution = 1024
 
     // Buffers
     private lateinit var bufferStack // Store trunks of buffers
@@ -41,46 +45,41 @@ class SpectrogramActivity : AppCompatActivity() {
     private lateinit var im // buffer holding imaginary part during fft process
             : FloatArray
 
+
+
     protected override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         // Share core
         Misc.setAttribute("activity", this)
 
-        // Load preferences
-        loadPreferences()
-
         // JNI interface
         this.nativeLib = SoundEngine()
         this.nativeLib.initFSin()
 
+
         // Recorder & player
         recorder = ContinuousRecord(samplingRate)
 
+
         // Create view for frequency display
         this.setContentView(R.layout.main)
-        //frequencyView = findViewById(R.id.frequency_view)
+        frequencyView = findViewById(R.id.frequency_view)
         timeView = findViewById(R.id.time_view)
-       // if (Misc.getPreference(this, "keep_screen_on", false)) frequencyView.setKeepScreenOn(true)
-       // frequencyView.setFFTResolution(fftResolution)
+        if (Misc.getPreference(this, "keep_screen_on", false)) frequencyView.setKeepScreenOn(true)
+        frequencyView.setFFTResolution(fftResolution)
         timeView.setFFTResolution(fftResolution)
-        //frequencyView.setSamplingRate(samplingRate)
+        frequencyView.setSamplingRate(samplingRate)
 
         // Color mode
         val nightMode: Boolean = Misc.getPreference(this, "night_mode", true)
         if (!nightMode) {
-          //  frequencyView.setBackgroundColor(Color.WHITE)
+            frequencyView.setBackgroundColor(Color.WHITE)
             timeView.setBackgroundColor(Color.WHITE)
         } else {
-           // frequencyView.setBackgroundColor(Color.BLACK)
+            frequencyView.setBackgroundColor(Color.BLACK)
             timeView.setBackgroundColor(Color.BLACK)
         }
-
-        /*// Prepare screen
-        getSupportActionBar().hide();
-        if (util.Misc.getPreference(this, "hide_status_bar", false))
-        	getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);*/
-
         // Action bar
         actionBar = getSupportActionBar()
         actionBar?.setTitle(getString(R.string.app_name))
@@ -102,43 +101,41 @@ class SpectrogramActivity : AppCompatActivity() {
             )
         }
     }
+
+
+
     /**
      * Control recording service
      */
     fun startRecording() {
-        recorder!!.start(object:ContinuousRecord.OnBufferReadyListener{
-            override fun onBufferReady(buffer: ShortArray) {
-                val n = fftResolution
-                Log.d("TESTstart",buffer[0].toFloat().toString())
-                // Trunks are consecutive n/2 length samples
-                for (i in 0 until  bufferStack.size-1)
-                    System.arraycopy(buffer, n / 2 * i, bufferStack[i + 1], 0, n / 2)
-
-                // Build n length buffers for processing
-                // Are build from consecutive trunks
-                for (i in 0 until  bufferStack.size-1 ) {
-                    System.arraycopy(bufferStack[i], 0, fftBuffer, 0, n / 2)
-                    System.arraycopy(bufferStack[i + 1], 0, fftBuffer, n / 2, n / 2)
-                    process()
-                }
-
-                // Last item has not yet fully be used (only its first half)
-                // Move it to first position in arraylist so that its last half is used
-                val first = bufferStack[0]
-                val last = bufferStack[bufferStack.size - 1]
-                System.arraycopy(last, 0, first, 0, n / 2)
-            }
-
-        })
+        recorder!!.start{recordBuffer ->getTrunks(recordBuffer) }
     }
 
     fun stopRecording() {
         recorder!!.stop()
     }
 
-    /**
-     * Handles response to permission request
-     */
+    private fun getTrunks(buffer:ShortArray){
+        val n = fftResolution
+        // Trunks are consecutive n/2 length samples
+        for (i in 0 until  bufferStack.size-1)
+            System.arraycopy(buffer, n / 2 * i, bufferStack[i + 1], 0, n / 2)
+
+        // Build n length buffers for processing
+        // Are build from consecutive trunks
+        for (i in 0 until  bufferStack.size-1 ) {
+            System.arraycopy(bufferStack[i], 0, fftBuffer, 0, n / 2)
+            System.arraycopy(bufferStack[i + 1], 0, fftBuffer, n / 2, n / 2)
+            process()
+        }
+
+        // Last item has not yet fully be used (only its first half)
+        // Move it to first position in arraylist so that its last half is used
+        val first = bufferStack[0]
+        val last = bufferStack[bufferStack.size - 1]
+        System.arraycopy(last, 0, first, 0, n / 2)
+    }
+
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,
@@ -163,11 +160,8 @@ class SpectrogramActivity : AppCompatActivity() {
             recorder!!.stop()
             recorder!!.release()
 
-            // Update preferences
-            loadPreferences()
-
             // Notify view
-           // frequencyView.setFFTResolution(fftResolution)
+            frequencyView.setFFTResolution(fftResolution)
             timeView.setFFTResolution(fftResolution)
             if (ContextCompat.checkSelfPermission(
                     this,
@@ -181,14 +175,13 @@ class SpectrogramActivity : AppCompatActivity() {
             // Update color mode
             val nightMode: Boolean = Misc.getPreference(this, "night_mode", false)
             if (!nightMode) {
-              //  frequencyView.setBackgroundColor(Color.WHITE)
+                frequencyView.setBackgroundColor(Color.WHITE)
                 timeView.setBackgroundColor(Color.WHITE)
             } else {
-                //frequencyView.setBackgroundColor(Color.BLACK)
+                frequencyView.setBackgroundColor(Color.BLACK)
                 timeView.setBackgroundColor(Color.BLACK)
             }
         }
-        //}
     }
 
  override fun onDestroy() {
@@ -198,11 +191,6 @@ class SpectrogramActivity : AppCompatActivity() {
         recorder!!.stop()
         recorder!!.release()
     }
-
-    private fun loadPreferences() {
-        fftResolution = Integer.parseInt(Misc.getPreference(this, "fft_resolution", getString(R.string.preferences_fft_resolution_default_value)));
-    }
-
     /**
      * Initiates the recording service
      * Creates objects to handle recording and FFT processing
@@ -242,12 +230,13 @@ class SpectrogramActivity : AppCompatActivity() {
      */
     private fun process() {
         val n = fftResolution
-        Log.d("re",fftBuffer[0].toString())
         val log2_n = (Math.log(n.toDouble()) / Math.log(2.0)).toInt()
         nativeLib.shortToFloat(fftBuffer, re, n)
         nativeLib.clearFloat(im, n) // Clear imaginary part
-        //Log.d("re",re.toString())
         timeView.setWave(re)
+
+        if (check_spec.isChecked) checkqq=true
+        else checkqq=false
 
         // Windowing to reduce spectrum leakage
         val window: String? = Misc.getPreference(
@@ -282,9 +271,9 @@ class SpectrogramActivity : AppCompatActivity() {
         ) else if (window == "Blackman-Harris") nativeLib.windowBlackmanHarris(re, n)
         nativeLib.fft(re, im, log2_n, 0) // Move into frquency domain
         nativeLib.toPolar(re, im, n) // Move to polar base
-        //frequencyView.setMagnitudes(re)
+        frequencyView.setMagnitudes(re)
         runOnUiThread {
-            //frequencyView.invalidate()
+            frequencyView.invalidate()
             timeView.invalidate()
         }
     }
