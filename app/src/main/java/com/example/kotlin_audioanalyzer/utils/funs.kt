@@ -10,9 +10,16 @@ import com.example.kotlin_audioanalyzer.R
 import java.util.*
 
 lateinit var APP_ACTIVITY: MainActivity
+var samplingRate=44100
+var fftResolution=1024
+
+var frameSizeEdit=1f
+
 var checkqq=false
 var countVoice:Long=0
 var etalonRun=false
+
+var stream=true
 
 var realtimebolean=false
 
@@ -29,31 +36,65 @@ fun resetAttributes() {
     map = HashMap()
 }
 
+fun searchMaxDefIndex(array: ArrayList<Float>,Index:Int): Float {
+    var max = 0f
+    for (i in Index until array.size) {
+        if (array[i] > max)
+            max = array[i]
+    }
+    return max
+}
 
-fun AppCompatActivity.replaceFragment(fragment: Fragment, addStack:Boolean=true){
+fun searchMaxDefIndex(array: FloatArray,Index:Int): Float {
+    var max = 0f
+    for (i in Index until array.size) {
+        if (array[i] > max)
+            max = array[i]
+    }
+    return max
+}
+
+fun searchMax(array: FloatArray): Float {
+    var max = 0f
+    for (i in 4 until array.size) {
+        if (array[i] > max)
+            max = array[i]
+    }
+    return max
+}
+fun searchMax(array: ArrayList<Float>): Float {
+    var max = 0f
+    for (i in 4 until array.size) {
+        if (array[i] > max)
+            max = array[i]
+    }
+    return max
+}
+fun searchMax(array: ShortArray): Float {
+    var max = 0f
+    for (i in 0 until array.size) {
+        if (array[i] > max)
+            max = array[i].toFloat()
+    }
+    return max
+}
+
+
+fun replaceFragment(fragment: Fragment, addStack:Boolean=true){
     if (addStack) {
-        supportFragmentManager.beginTransaction()
+        APP_ACTIVITY.supportFragmentManager.beginTransaction()
             .addToBackStack(null)
             .replace(
                 R.id.data_container,
                 fragment
             ).commit()
     }else{
-        supportFragmentManager.beginTransaction()
+        APP_ACTIVITY.supportFragmentManager.beginTransaction()
             .replace(
                 R.id.data_container,
                 fragment
             ).commit()
     }
-}
-
-fun Fragment.replaceFragment(fragment: Fragment){
-    this.fragmentManager?.beginTransaction()
-        ?.addToBackStack(null)
-        ?.replace(
-            R.id.data_container,
-            fragment
-        )?.commit()
 }
 
 fun showToast(message: String){

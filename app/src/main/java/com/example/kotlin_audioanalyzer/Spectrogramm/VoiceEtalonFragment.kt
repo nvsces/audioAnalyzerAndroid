@@ -4,28 +4,20 @@ import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
 import android.view.MotionEvent
-import android.view.View
-import android.view.ViewGroup
 import com.example.kotlin_audioanalyzer.R
-import com.example.kotlin_audioanalyzer.utils.countVoice
-import com.example.kotlin_audioanalyzer.utils.etalonRun
-import com.example.kotlin_audioanalyzer.utils.replaceFragment
+import com.example.kotlin_audioanalyzer.utils.*
 import kotlinx.android.synthetic.main.fragment_voice_etalon.*
-import kotlinx.android.synthetic.main.main.*
-import java.io.File
 
 class VoiceEtalonFragment : Fragment(R.layout.fragment_voice_etalon) {
 
     private var Voicerecorder: VoiceRecord? = null
-    private var fs=44100
     private  var mEtalonList=ArrayList<ShortArray>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Voicerecorder= VoiceRecord(fs)
-        Voicerecorder?.prepare(1024)
+        Voicerecorder= VoiceRecord(samplingRate)
+        Voicerecorder?.prepare(fftResolution)
     }
 
     override fun onResume() {
@@ -50,7 +42,7 @@ class VoiceEtalonFragment : Fragment(R.layout.fragment_voice_etalon) {
                     mEtalonList.addAll(Voicerecorder!!.etalonList)
                     Voicerecorder!!.etalonList.clear()
                     Log.d("TEST", countVoice.toString())
-                   replaceFragment(InfoBufferFragment(mEtalonList))
+                   replaceFragment(InfoBufferFragment(mEtalonList, countVoice))
                 }
             true
         }
