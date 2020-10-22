@@ -36,6 +36,15 @@ fun resetAttributes() {
     map = HashMap()
 }
 
+
+fun short2FloatArray(shortArray: ShortArray):FloatArray{
+    val floatArray=FloatArray(shortArray.size)
+    for (i in shortArray.indices){
+        floatArray[i]=shortArray[i].toFloat()
+    }
+    return floatArray
+}
+
 fun searchMaxDefIndex(array: ArrayList<Float>,Index:Int): Float {
     var max = 0f
     for (i in Index until array.size) {

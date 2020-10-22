@@ -58,7 +58,7 @@ package com.example.kotlin_audioanalyzer.feature;
  * @author Danny Su
  * @author Hanns Holger Rutz
  */
-public class FFT {
+public class FFT_ {
     float[] real;
     float[] imag;
 
