@@ -92,7 +92,7 @@ class InfoBufferFragment(var listBuffer: ArrayList<ShortArray>, val countEtalon:
         stream=false
     }
 
-    private fun getTrunks(recordBuffer: ShortArray) {
+    private fun  getTrunks(recordBuffer: ShortArray) {
         val fftReal = fft(nativeLib, recordBuffer, fftResolution)
         val temp = FloatArray(fftResolution/2)
         System.arraycopy(fftReal, 0, temp, 0, fftResolution / 2)

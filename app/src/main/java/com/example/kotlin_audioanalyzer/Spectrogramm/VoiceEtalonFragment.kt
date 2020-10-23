@@ -48,7 +48,8 @@ class VoiceEtalonFragment : Fragment(R.layout.fragment_voice_etalon) {
                     Log.d("TEST",mfcc.toString())
                     Voicerecorder!!.etalonList.clear()
                     Log.d("TEST", countVoice.toString())
-                   replaceFragment(InfoBufferFragment(mEtalonList, countVoice))
+                    replaceFragment(MfccFragment(mEtalonList))
+                   //replaceFragment(InfoBufferFragment(mEtalonList, countVoice))
                 }
             true
         }

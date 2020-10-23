@@ -126,10 +126,12 @@ public class Sonopy {
      */
     @NotNull
     static float[][] chopArray(@NotNull float[] array, int windowSize, int hopSize) {
-        List<float[]> floats = new ArrayList<>(((array.length + 1 - windowSize) / hopSize) + 1);
-        for (int i = windowSize; i < array.length + 1; i += hopSize) {
-            floats.add(Arrays.copyOfRange(array, i - windowSize, i));
-        }
+       // List<float[]> floats = new ArrayList<>(((array.length + 1 - windowSize) / hopSize) + 1);
+        List<float[]> floats = new ArrayList<>((1)); ///
+//        for (int i = windowSize; i < array.length + 1; i += hopSize) {
+//            floats.add(Arrays.copyOfRange(array, i - windowSize, i));
+//        }
+        floats.add(Arrays.copyOfRange(array,0,array.length-1)); ///
         return floats.toArray(new float[0][0]);
     }
 
@@ -189,6 +191,8 @@ public class Sonopy {
     /**
      * Calculates power spectrogram
      */
+
+
     @NotNull
     public static float[][] powerSpec(@NotNull float[] audio, int audioWindowSize, int audioWindowHop, int fftSize) {
         float[][] frames = chopArray(audio, audioWindowSize, audioWindowHop);
@@ -204,6 +208,21 @@ public class Sonopy {
         }
         return out;
     }
+
+    @NotNull
+    public static float[] powerSpec2(@NotNull float[] audio, int audioWindowSize, int audioWindowHop, int fftSize) {
+       // float[][] frames = chopArray(audio, audioWindowSize, audioWindowHop);
+        float[] out = new float[audio.length];
+            float[][] fftResult = FFT.rfft(audio, fftSize);
+            float[] real = fftResult[0], imag = fftResult[1];
+            assert real.length == imag.length;
+            out = new float[real.length];
+            for (int j = 0; j < out.length; j++) {
+                out[j] = (real[j] * real[j] + imag[j] * imag[j]) / (float) fftSize;
+            }
+        return out;
+    }
+
 
     /**
      * @param x a 2d input array (tensor shape not required)
