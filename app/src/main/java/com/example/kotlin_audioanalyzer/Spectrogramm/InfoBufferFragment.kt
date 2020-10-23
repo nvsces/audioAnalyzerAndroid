@@ -6,6 +6,8 @@ import android.view.*
 import androidx.fragment.app.Fragment
 import android.widget.Button
 import com.example.kotlin_audioanalyzer.R
+import com.example.kotlin_audioanalyzer.feature.FFT_
+import com.example.kotlin_audioanalyzer.feature.sonopy.FFT
 import com.example.kotlin_audioanalyzer.utils.*
 import kotlinx.android.synthetic.main.fragment_info_buffer.*
 import kotlinx.coroutines.CoroutineScope
@@ -16,7 +18,7 @@ import net.galmiza.android.engine.sound.SoundEngine
 class InfoBufferFragment(var listBuffer: ArrayList<ShortArray>, val countEtalon: Long) :
     Fragment(R.layout.fragment_info_buffer) {
 
-    private lateinit var nativeLib: SoundEngine
+    private lateinit var fftClass: FFT_
     private lateinit var tempReal: FloatArray
     private var bufferRealTime = ArrayList<Float>()
     private var bufferFFTDataEtalon=ArrayList<FloatArray>()
@@ -31,8 +33,8 @@ class InfoBufferFragment(var listBuffer: ArrayList<ShortArray>, val countEtalon:
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
-        this.nativeLib = SoundEngine()
-        this.nativeLib.initFSin()
+
+        fftClass= FFT_()
         voiceRecord = VoiceRecord(44100)
         voiceRecord?.prepare(1024)
     }
@@ -93,7 +95,7 @@ class InfoBufferFragment(var listBuffer: ArrayList<ShortArray>, val countEtalon:
     }
 
     private fun  getTrunks(recordBuffer: ShortArray) {
-        val fftReal = fft(nativeLib, recordBuffer, fftResolution)
+        val fftReal = FFT.rfft(short2FloatArray(recordBuffer), fftResolution)
         val temp = FloatArray(fftResolution/2)
         System.arraycopy(fftReal, 0, temp, 0, fftResolution / 2)
         bufferFFTDataCurrent.add(temp)
@@ -116,23 +118,7 @@ class InfoBufferFragment(var listBuffer: ArrayList<ShortArray>, val countEtalon:
     fun listShortArray2FloatArray() {
 
     }
-
-    private fun fft(nativeLib: SoundEngine, input: ShortArray, fftResolution: Int): FloatArray {
-
-        val real = FloatArray(fftResolution)
-        val imag = FloatArray(fftResolution)
-
-        nativeLib.shortToFloat(input, real, fftResolution)
-        nativeLib.clearFloat(imag, fftResolution)
-
-        val log2_n = (Math.log(fftResolution.toDouble()) / Math.log(2.0)).toInt()
-        nativeLib.windowHamming(real, fftResolution)
-        nativeLib.fft(real, imag, log2_n, 0) // Move into frquency domain
-        nativeLib.toPolar(real, imag, fftResolution)
-
-        return real
-    }
-
+    
     private fun frequencyProcess() {
         val n = fftResolution
         re = FloatArray(n)
@@ -140,7 +126,9 @@ class InfoBufferFragment(var listBuffer: ArrayList<ShortArray>, val countEtalon:
         val arrayTon = FloatArray(listBuffer.size)
 
         tempReal = FloatArray(n / 2)
-        re = fft(nativeLib, listBuffer[2], n)
+        val fftTemp=FFT.rfft(short2FloatArray(listBuffer[2]), n)
+        re=fftTemp[0]
+        im=fftTemp[1]
         System.arraycopy(re, 0, tempReal, 0, re.size / 2)
 
         bufferFFTDataEtalon.add(tempReal)
@@ -150,7 +138,7 @@ class InfoBufferFragment(var listBuffer: ArrayList<ShortArray>, val countEtalon:
 
         for (i in 1 until listBuffer.size) {
             val temFFT=FloatArray(n / 2)
-            re = fft(nativeLib, listBuffer[i], n)
+            re = FFT.rfft(short2FloatArray(listBuffer[i]), n)[0]
             System.arraycopy(re, 0, temFFT, 0, re.size / 2)
             bufferFFTDataEtalon.add(temFFT)
             maxIdx = temFFT.indices.maxBy { temFFT[it] } ?: -1
