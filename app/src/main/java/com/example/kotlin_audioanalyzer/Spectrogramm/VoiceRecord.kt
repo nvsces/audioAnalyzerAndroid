@@ -3,7 +3,7 @@ package com.example.kotlin_audioanalyzer.Spectrogramm
 import android.media.AudioFormat
 import android.media.AudioRecord
 import android.media.MediaRecorder
-import com.example.kotlin_audioanalyzer.utils.countVoice
+import com.example.kotlin_audioanalyzer.utils.currentRun
 import com.example.kotlin_audioanalyzer.utils.etalonRun
 
 class VoiceRecord(val fs:Int) {
@@ -47,12 +47,11 @@ class VoiceRecord(val fs:Int) {
     fun startTime(function:(recordBuffer:ShortArray)->Unit) {
         audioRecord?.startRecording()
         thread = Thread {
-            while (countVoice>0) {
+            while (currentRun) {
                 val recordBuffer = ShortArray(recordLength)
                 audioRecord!!.read(recordBuffer, 0, recordLength)
                 etalonList.add(recordBuffer)
                 function(recordBuffer)
-                countVoice--
             }
         }
         thread!!.start()

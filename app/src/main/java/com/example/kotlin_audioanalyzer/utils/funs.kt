@@ -12,14 +12,15 @@ import kotlin.collections.ArrayList
 
 lateinit var APP_ACTIVITY: MainActivity
 var samplingRate=44100
-var fftResolution=1024
-
+var fftResolution=2048
+var mfcc_realtime=false
+var streamMFCC=false
 var frameSizeEdit=1f
 
 var numFilters=13
 
 var checkqq=false
-var countVoice:Long=0
+var currentRun=false
 var etalonRun=false
 
 var stream=true
@@ -40,7 +41,8 @@ fun resetAttributes() {
 }
 
 
-fun deleteFrameIsMFCC(listMFCC:ArrayList<Array<FloatArray>>):ArrayList<FloatArray>{
+
+fun deleteFrameListIsMFCC(listMFCC:ArrayList<Array<FloatArray>>):ArrayList<FloatArray>{
     val outArray=ArrayList<FloatArray>()
     for ( i in 0 until listMFCC.size){
         val array:FloatArray=listMFCC[i][0]

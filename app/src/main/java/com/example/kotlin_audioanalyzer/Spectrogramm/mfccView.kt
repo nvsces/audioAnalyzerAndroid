@@ -7,90 +7,139 @@ import android.graphics.Paint
 import android.graphics.Rect
 import android.util.AttributeSet
 import android.view.View
+import com.example.kotlin_audioanalyzer.utils.mfcc_realtime
 import com.example.kotlin_audioanalyzer.utils.numFilters
+import kotlin.math.absoluteValue
 
 class mfccView: View {
 
+    private var paintFill = Paint()
+    private var paintStroke = Paint()
+    private var paintFillCircle=Paint()
+    private lateinit var mfccArray: ArrayList<FloatArray>
+    private var realTimeData = ArrayList<FloatArray>()
 
-    private var paint=Paint()
-    private lateinit var mfccArray:ArrayList<FloatArray>
-//    private val colorRainbow =
-//        intArrayOf(-0x1, -0xff01, -0x10000, -0x100, -0xff0100, -0xff0001, -0xffff01, -0x1000000)
-    private val colorRainbow =
-        intArrayOf(Color.YELLOW, Color.MAGENTA, Color.DKGRAY, Color.CYAN, Color.BLUE,Color.BLACK, Color.RED, Color.GREEN)
-
+    private val colorParula =
+        intArrayOf(
+            Color.parseColor("#f9fb0d"),
+            Color.parseColor("#f5e422"),
+            Color.parseColor("#fee435"),
+            Color.parseColor("#ddbe24"),
+            Color.parseColor("#c6c326"),
+            Color.parseColor("#9eca41"),
+            Color.parseColor("#73ce64"),
+            Color.parseColor("#56cd7b"),
+            Color.parseColor("#34c998"),
+            Color.parseColor("#28c5a9"),
+            Color.parseColor("#00b9cb"),
+            Color.parseColor("#2e7dfc"),
+            Color.parseColor("#4439df"),
+            Color.parseColor("#3c21aa")
+        )
 
     constructor(context: Context) : super(context)
     constructor(context: Context, attrs: AttributeSet) : super(context, attrs)
 
-
-    fun setWave(arrayList: ArrayList<FloatArray>)
-    {
-        mfccArray=arrayList
+    fun setWave(arrayList: ArrayList<FloatArray>) {
+        mfccArray = arrayList
     }
 
+    fun setRealTimeWave(bufferMfccRealTime: ArrayList<FloatArray>) {
+        realTimeData.clear()
+        realTimeData.addAll(bufferMfccRealTime)
+    }
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
         val width = width
         val height = height
+        val k = height / numFilters
 
-        var k=height/ numFilters
-        var scaleWidth=width/mfccArray.size
+        paintFill.style = Paint.Style.FILL
+        paintFill.color = Color.GREEN
+        paintStroke.style = Paint.Style.STROKE
+        paintStroke.color = Color.BLACK
 
+        mfccDrawEtalon(canvas,width,height,k)
 
-        paint.color=Color.GREEN
-
-
-
-        for ( i in 0 until mfccArray.size){
-            val mas=mfccArray[i]
-            for (j in 0 until mas.size){
-                val myRect=Rect()
-                var aLeft:Int=(i)*width/mfccArray.size.toInt()
-                var aTop:Int=height-(mas.size-(j))*k
-                val aRight:Int=(i+1)*width/mfccArray.size.toInt()
-                val aBottom:Int=height-(mas.size-(j+1))
-                myRect.set(aLeft,aTop,aRight,aBottom)
-                paint.color=defineColor(colorRainbow,mas[j])
-                canvas.drawRect(myRect,paint)
-            }
+        if (mfcc_realtime){
+            mfccDrawCurrent(canvas,width,height,k)
         }
 
-
-      /*  for (i in 0 until mfccArray.size){
-            val mas=mfccArray[i]
-                while (scaleWidth>0) {
-                    var wTemp=width-(mfccArray.size-i)*scaleWidth.toFloat()
-                    scaleWidth--
-                    for (j in 0 until mas.size){
-                        while (k > 0) {
-                            val hTemp = height - (mas.size - (j)) * k.toFloat()
-                            canvas.drawPoint(wTemp, hTemp, paint)
-                            k--
-                    }
-                    k = height / numFilters
-                }
-            }
-            scaleWidth=width/mfccArray.size
-        }*/
     }
 
-    private fun defineColor(colorRainbow: IntArray,Amplitude:Float): Int {
-        if (Amplitude>0){
-            if(Amplitude>0.5){
-                if (Amplitude>1){
-                    if (Amplitude>2)    return colorRainbow[0]
-                    else return colorRainbow[1]
-                }else return colorRainbow[2]
-            }else return colorRainbow[3]
-        } else{
-            if(Amplitude<-0.5){
-                if (Amplitude<-1){
-                    if (Amplitude<-2)    return colorRainbow[4]
-                    else return colorRainbow[5]
-                }else return colorRainbow[6]
-            }else return colorRainbow[7]
+    private fun mfccDrawCurrent(canvas: Canvas, width: Int, height: Int, k: Int) {
+        val alpha=0.7
+        for (i in 0 until realTimeData.size) {
+            val mas = realTimeData[i]
+            val masEtalon=mfccArray[i]
+            for (j in 0 until mas.size) {
+
+                val aLeft: Int = (i) * width / mfccArray.size.toInt()
+                val aTop: Int = height-(mas.size - (j)) * k
+                val aRight: Int = (i + 1) * width / mfccArray.size.toInt()
+                paintFillCircle.color = colorDefine(colorParula, mas[j])
+                paintStroke.color=Color.BLACK
+                val x=(aRight-aLeft).toFloat()
+                var radius=0f
+                radius=x/2
+//                radius = if (x>y) y
+//                else x
+                val xCircle=(x/2)+aLeft
+                val yCircle=(aTop+(k/2)).toFloat()
+                canvas.drawCircle(xCircle, yCircle, radius, paintFillCircle)
+                canvas.drawCircle(xCircle, yCircle, radius, paintStroke)
+            }
         }
+    }
+
+    private fun mfccDrawEtalon(canvas: Canvas, width: Int, height: Int, k: Int) {
+        for (i in 0 until mfccArray.size) {
+            val mas = mfccArray[i]
+            for (j in 0 until mas.size) {
+                val myRect = Rect()
+                val aLeft: Int = (i) * width / mfccArray.size.toInt()
+                val aTop: Int = height - (mas.size - (j)) * k
+                val aRight: Int = (i + 1) * width / mfccArray.size.toInt()
+                val aBottom: Int = height - (mas.size - (j + 1))
+                myRect.set(aLeft, aTop, aRight, aBottom)
+                paintFill.color = colorDefine(colorParula, mas[j])
+                canvas.drawRect(myRect, paintFill)
+                canvas.drawRect(myRect, paintStroke)
+            }
+        }
+    }
+
+
+    private fun colorDefine(color: IntArray, Amplitude: Float): Int {
+        val gradation = color.size
+
+        var highLimit = 15
+        var lowLimit = -15
+
+        var numGradation = (highLimit - lowLimit) / gradation
+        var valueGradation = IntArray(gradation)
+
+        for (i in 0 until gradation) {
+            valueGradation[i] = (highLimit - i * numGradation)
+        }
+        val aColor = amplitudeToColor(valueGradation, Amplitude)
+        return color[aColor]
+    }
+
+    fun amplitudeToColor(valueGradation: IntArray, amplitude: Float): Int {
+
+        var result = 0
+        var tempDifference = (amplitude - valueGradation[0]).absoluteValue
+
+        for (i in 1 until valueGradation.size) {
+            val tempResult = (amplitude - valueGradation[i]).absoluteValue
+            if (tempResult < tempDifference) {
+                tempDifference = tempResult
+                result = i
+            }
+        }
+        return result
     }
 }
+

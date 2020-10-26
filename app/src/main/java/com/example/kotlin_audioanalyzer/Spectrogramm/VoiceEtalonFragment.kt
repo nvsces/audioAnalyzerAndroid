@@ -38,7 +38,7 @@ class VoiceEtalonFragment : Fragment(R.layout.fragment_voice_etalon) {
                     btn_voice_etalon.setBackgroundResource(R.drawable.ic_voice_blue)
                         etalonRun = true
                     mEtalonList.clear()
-                        Voicerecorder?.start(){ countVoice++}
+                        Voicerecorder?.start(){ }
                 } else if (event.action== MotionEvent.ACTION_UP){
                     btn_voice_etalon.setBackgroundResource(R.drawable.ic_voice)
                     etalonRun =false
@@ -47,9 +47,7 @@ class VoiceEtalonFragment : Fragment(R.layout.fragment_voice_etalon) {
                     var mfcc=sonopy.mfccSpec(short2FloatArray(mEtalonList[2]),13)
                     Log.d("TEST",mfcc.toString())
                     Voicerecorder!!.etalonList.clear()
-                    Log.d("TEST", countVoice.toString())
-                    replaceFragment(MfccFragment(mEtalonList))
-                   //replaceFragment(InfoBufferFragment(mEtalonList, countVoice))
+                   replaceFragment(InfoBufferFragment(mEtalonList))
                 }
             true
         }

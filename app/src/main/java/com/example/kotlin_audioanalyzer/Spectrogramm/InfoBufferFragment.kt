@@ -15,10 +15,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import net.galmiza.android.engine.sound.SoundEngine
 
-class InfoBufferFragment(var listBuffer: ArrayList<ShortArray>, val countEtalon: Long) :
+class InfoBufferFragment(var listBuffer: ArrayList<ShortArray>) :
     Fragment(R.layout.fragment_info_buffer) {
 
-    private lateinit var fftClass: FFT_
     private lateinit var tempReal: FloatArray
     private var bufferRealTime = ArrayList<Float>()
     private var bufferFFTDataEtalon=ArrayList<FloatArray>()
@@ -33,9 +32,7 @@ class InfoBufferFragment(var listBuffer: ArrayList<ShortArray>, val countEtalon:
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
-
-        fftClass= FFT_()
-        voiceRecord = VoiceRecord(44100)
+        voiceRecord = VoiceRecord(samplingRate)
         voiceRecord?.prepare(1024)
     }
 
@@ -49,7 +46,7 @@ class InfoBufferFragment(var listBuffer: ArrayList<ShortArray>, val countEtalon:
                 showToast("Меню спектр")
                 replaceFragment(SpecFragment(bufferFFTDataEtalon,bufferFFTDataCurrent))
             }
-            R.id.settings_menu_graph -> showToast("Меню график")
+            R.id.settings_menu_mfcc ->replaceFragment(MfccFragment(listBuffer))
         }
         return true
     }
@@ -67,6 +64,7 @@ class InfoBufferFragment(var listBuffer: ArrayList<ShortArray>, val countEtalon:
                 realtimebolean = true
                 mEtalonList.clear()
                 bufferRealTime.clear()
+                currentRun=true
                 (it as Button).text = "stop"
                 voiceRecord?.startTime() { recordBuffer ->
                     getTrunks(recordBuffer)
@@ -79,7 +77,8 @@ class InfoBufferFragment(var listBuffer: ArrayList<ShortArray>, val countEtalon:
     private fun strartCurrentVoice() {
         CoroutineScope(Dispatchers.Default).launch {
             while (stream){
-                if (countVoice<1) {
+                if (bufferRealTime.size==listBuffer.size) {
+                    currentRun=false
                     voiceRecord?.stop()
                     APP_ACTIVITY.runOnUiThread { info_start.text="Start" }
                     startCurrentVoiceReset()
@@ -88,14 +87,14 @@ class InfoBufferFragment(var listBuffer: ArrayList<ShortArray>, val countEtalon:
         }
     }
     private fun startCurrentVoiceReset() {
-        countVoice=countEtalon
         etalonRun=false
+        currentRun=false
         realtimebolean=false
         stream=false
     }
 
     private fun  getTrunks(recordBuffer: ShortArray) {
-        val fftReal = FFT.rfft(short2FloatArray(recordBuffer), fftResolution)
+        val fftReal = FFT.rfft(short2FloatArray(recordBuffer), fftResolution)[0]
         val temp = FloatArray(fftResolution/2)
         System.arraycopy(fftReal, 0, temp, 0, fftResolution / 2)
         bufferFFTDataCurrent.add(temp)
@@ -110,15 +109,10 @@ class InfoBufferFragment(var listBuffer: ArrayList<ShortArray>, val countEtalon:
     override fun onResume() {
         super.onResume()
         frq_view.setBackgroundColor(Color.BLACK)
-        countVoice=countEtalon
         frequencyProcess()
         initBtn()
     }
 
-    fun listShortArray2FloatArray() {
-
-    }
-    
     private fun frequencyProcess() {
         val n = fftResolution
         re = FloatArray(n)

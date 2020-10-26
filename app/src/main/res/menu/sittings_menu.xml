@@ -13,8 +13,8 @@
                 app:showAsAction="never" />
 
             <item
-                android:id="@+id/settings_menu_graph"
-                android:title="График"
+                android:id="@+id/settings_menu_mfcc"
+                android:title="MFCC"
                 app:showAsAction="never" />
         </menu>
 
