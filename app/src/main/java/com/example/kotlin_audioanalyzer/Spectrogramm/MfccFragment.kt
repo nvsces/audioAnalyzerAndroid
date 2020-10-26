@@ -30,11 +30,11 @@ class MfccFragment(var listBuffer: ArrayList<ShortArray>) : Fragment(R.layout.fr
         super.onCreate(savedInstanceState)
         voiceRecord = VoiceRecord(samplingRate)
         voiceRecord?.prepare(1024)
+        sonopy= Sonopy(samplingRate,listBuffer[0].size,0, fftResolution/2, numFilters)
     }
 
     override fun onResume() {
         super.onResume()
-        sonopy= Sonopy(samplingRate,listBuffer[0].size,0, fftResolution/2, numFilters)
         initMFCC()
         initGraph()
         initBtn()
@@ -77,13 +77,9 @@ class MfccFragment(var listBuffer: ArrayList<ShortArray>) : Fragment(R.layout.fr
         }
     }
 
-    private fun deleteFrameIsMFCC(mfcc: Array<FloatArray>): FloatArray {
-        return mfcc[0]
-    }
 
     private fun initGraph() {
         mfcc_textView.text="MFCC"
-
         listMFCCOut.addAll(deleteFrameListIsMFCC(listMFCC))
         v_mfcc_view.setWave(listMFCCOut)
         v_mfcc_view.invalidate()

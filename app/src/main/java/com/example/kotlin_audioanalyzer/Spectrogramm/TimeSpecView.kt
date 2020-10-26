@@ -8,7 +8,6 @@ import android.graphics.Paint
 import android.util.AttributeSet
 import android.util.Log
 import android.view.View
-import com.example.kotlin_audioanalyzer.Spectrogramm.Misc.activity
 import com.example.kotlin_audioanalyzer.utils.*
 import kotlin.math.abs
 import kotlin.math.floor
@@ -20,11 +19,9 @@ class TimeSpecView : View {
     private lateinit var frequencyArray: FloatArray
 
     constructor(context: Context) : super(context) {
-        activity = Misc.getAttribute("activity") as Activity
     }
 
     constructor(context: Context, attrs: AttributeSet) : super(context, attrs) {
-        activity = Misc.getAttribute("activity") as Activity?
     }
 
 

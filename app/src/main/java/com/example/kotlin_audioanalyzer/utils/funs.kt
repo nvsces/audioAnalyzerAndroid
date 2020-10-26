@@ -1,13 +1,9 @@
 package com.example.kotlin_audioanalyzer.utils
 
-import android.app.Activity
-import android.preference.PreferenceManager
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.example.kotlin_audioanalyzer.MainActivity
 import com.example.kotlin_audioanalyzer.R
-import java.util.*
 import kotlin.collections.ArrayList
 
 lateinit var APP_ACTIVITY: MainActivity
@@ -23,24 +19,13 @@ var checkqq=false
 var currentRun=false
 var etalonRun=false
 
-var stream=true
+var streamRealTime=true
 
 var realtimebolean=false
 
-var map = HashMap<String, Any>()
-fun getAttribute(s: String): Any? {
-    return map[s]
+fun deleteFrameIsMFCC(mfcc: Array<FloatArray>): FloatArray {
+    return mfcc[0]
 }
-
-fun setAttribute(s: String, o: Any) {
-    map[s] = o
-}
-
-fun resetAttributes() {
-    map = HashMap()
-}
-
-
 
 fun deleteFrameListIsMFCC(listMFCC:ArrayList<Array<FloatArray>>):ArrayList<FloatArray>{
     val outArray=ArrayList<FloatArray>()
