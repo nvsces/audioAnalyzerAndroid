@@ -6,22 +6,7 @@ import com.example.kotlin_audioanalyzer.MainActivity
 import com.example.kotlin_audioanalyzer.R
 import kotlin.collections.ArrayList
 
-lateinit var APP_ACTIVITY: MainActivity
-var samplingRate=44100
-var fftResolution=2048
-var mfcc_realtime=false
-var streamMFCC=false
-var frameSizeEdit=1f
 
-var numFilters=13
-
-var checkqq=false
-var currentRun=false
-var etalonRun=false
-
-var streamRealTime=true
-
-var realtimebolean=false
 
 fun deleteFrameIsMFCC(mfcc: Array<FloatArray>): FloatArray {
     return mfcc[0]

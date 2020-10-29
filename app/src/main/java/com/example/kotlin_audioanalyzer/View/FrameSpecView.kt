@@ -1,6 +1,5 @@
-package com.example.kotlin_audioanalyzer.Spectrogramm
+package com.example.kotlin_audioanalyzer.View
 
-import android.app.Activity
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color

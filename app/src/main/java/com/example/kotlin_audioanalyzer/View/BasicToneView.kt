@@ -1,18 +1,15 @@
-package com.example.kotlin_audioanalyzer.Spectrogramm
+package com.example.kotlin_audioanalyzer.View
 
-import android.app.Activity
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.util.AttributeSet
-import android.util.Log
 import android.view.View
 import com.example.kotlin_audioanalyzer.utils.*
-import kotlin.math.abs
 import kotlin.math.floor
 
-class TimeSpecView : View {
+class BasicToneView : View {
 
     private var paint = Paint()
     private var realTimeData = ArrayList<Float>()

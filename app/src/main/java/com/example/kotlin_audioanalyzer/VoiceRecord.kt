@@ -1,4 +1,4 @@
-package com.example.kotlin_audioanalyzer.Spectrogramm
+package com.example.kotlin_audioanalyzer
 
 import android.media.AudioFormat
 import android.media.AudioRecord

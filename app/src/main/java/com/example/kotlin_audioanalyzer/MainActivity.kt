@@ -4,8 +4,9 @@ import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.core.content.ContextCompat
-import com.example.kotlin_audioanalyzer.Spectrogramm.VoiceEtalonFragment
+import com.example.kotlin_audioanalyzer.fragments.VoiceEtalonFragment
 import com.example.kotlin_audioanalyzer.databinding.ActivityMainBinding
+import com.example.kotlin_audioanalyzer.fragments.TitleFragment
 import com.example.kotlin_audioanalyzer.utils.APP_ACTIVITY
 import com.example.kotlin_audioanalyzer.utils.RECORD_AUDIO
 import com.example.kotlin_audioanalyzer.utils.checkPermissions

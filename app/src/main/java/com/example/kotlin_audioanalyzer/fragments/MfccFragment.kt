@@ -1,12 +1,12 @@
-package com.example.kotlin_audioanalyzer.Spectrogramm
+package com.example.kotlin_audioanalyzer.fragments
 
 import android.os.Bundle
 import android.widget.Button
 import androidx.fragment.app.Fragment
 import com.example.kotlin_audioanalyzer.R
+import com.example.kotlin_audioanalyzer.VoiceRecord
 import com.example.kotlin_audioanalyzer.feature.sonopy.Sonopy
 import com.example.kotlin_audioanalyzer.utils.*
-import kotlinx.android.synthetic.main.fragment_info_buffer.*
 import kotlinx.android.synthetic.main.fragment_mfcc.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

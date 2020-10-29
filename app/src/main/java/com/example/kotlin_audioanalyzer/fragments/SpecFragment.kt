@@ -1,4 +1,4 @@
-package com.example.kotlin_audioanalyzer.Spectrogramm
+package com.example.kotlin_audioanalyzer.fragments
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment

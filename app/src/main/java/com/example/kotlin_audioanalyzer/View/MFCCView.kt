@@ -1,4 +1,4 @@
-package com.example.kotlin_audioanalyzer.Spectrogramm
+package com.example.kotlin_audioanalyzer.View
 
 import android.content.Context
 import android.graphics.Canvas
@@ -11,7 +11,7 @@ import com.example.kotlin_audioanalyzer.utils.*
 import kotlin.math.absoluteValue
 import kotlin.math.floor
 
-class mfccView: View {
+class MFCCView: View {
 
     private var paintFillRect = Paint()
     private var paintStroke = Paint()
@@ -93,7 +93,7 @@ class mfccView: View {
                 val x=(aRight-aLeft).toFloat()
                 var radius=0f
                 radius = if (x>k) (k/2).toFloat()
-                else x/2
+                        else x/2
                 val xCircle=(x/2)+aLeft
                 val yCircle=(aTop+(k/2)).toFloat()
                 canvas.drawCircle(xCircle, yCircle, radius, paintFillCircle)
