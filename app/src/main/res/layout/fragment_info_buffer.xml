@@ -11,8 +11,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Основной тон"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/info_size_frame"
+        app:layout_constraintStart_toEndOf="@+id/button"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
@@ -25,7 +25,7 @@
 
     <EditText
         android:id="@+id/info_size_frame"
-        android:layout_width="150dp"
+        android:layout_width="100dp"
         android:gravity="center"
         android:layout_height="wrap_content"
         android:text="1.5"
@@ -53,5 +53,13 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/info_start"/>
+
+    <Button
+        android:id="@+id/info_btn_sound"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Sound"
+        app:layout_constraintStart_toEndOf="@+id/info_start"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

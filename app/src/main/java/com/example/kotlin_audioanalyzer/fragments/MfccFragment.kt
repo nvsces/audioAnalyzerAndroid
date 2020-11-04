@@ -42,7 +42,7 @@ class MfccFragment(var listBuffer: ArrayList<ShortArray>) : Fragment(R.layout.fr
 
     private fun initBtn() {
         mfcc_btn_start.setOnClickListener {
-            streamMFCC=true
+            streamRealTime=true
             currentRun=true
             bufferMfccRealTime.clear()
             (it as Button).text = "stop"
@@ -55,10 +55,10 @@ class MfccFragment(var listBuffer: ArrayList<ShortArray>) : Fragment(R.layout.fr
 
     private fun strartCurrentVoice() {
         CoroutineScope(Dispatchers.Default).launch {
-            while (streamMFCC){
+            while (streamRealTime){
                 if (bufferMfccRealTime.size==listBuffer.size) {
                     currentRun=false
-                    streamMFCC=false
+                    streamRealTime=false
                     voiceRecord?.stop()
                     APP_ACTIVITY.runOnUiThread { mfcc_btn_start.text="Start" }
                     //startCurrentVoiceReset()

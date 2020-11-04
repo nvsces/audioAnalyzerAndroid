@@ -24,7 +24,7 @@ class BasicToneView : View {
 
     fun setWaveFrequency(wList: FloatArray) {
         frequencyArray = FloatArray(wList.size)
-        val maxWave= fftResolution/2
+        val maxWave = fftResolution / 2
         val a = samplingRate / (2 * fftResolution)
         for (j in wList.indices) {
             frequencyArray[j] = (wList[j] / maxWave)
@@ -42,12 +42,11 @@ class BasicToneView : View {
     fun setRealTimeWave(input: ArrayList<Float>) {
         realTimeData.clear()
         realTimeData.addAll(input)
-        val maxWave= fftResolution/2
+        val maxWave = fftResolution / 2
         for (j in 0 until input.size) {
             realTimeData[j] = (realTimeData[j] / maxWave)
         }
     }
-
 
 
     private fun searchMin(array: FloatArray): Float {
@@ -60,7 +59,7 @@ class BasicToneView : View {
     }
 
     private fun drawEtalon(canvas: Canvas, width: Int, height: Int, a: Float = 1f) {
-        paint.color=Color.WHITE
+        paint.color = Color.WHITE
         var x1: Float = 0f
         var y1: Float = (height * frequencyArray[4]) * a
 
@@ -95,7 +94,7 @@ class BasicToneView : View {
         val wFrequency = 40
         val rWidth = width - wColor - wFrequency
 
-        val frameSize= floor(frameSizeEdit* samplingRate/ fftResolution).toInt()
+        val frameSize = floor(frameSizeEdit * samplingRate / fftResolution).toInt()
 
         paint.strokeWidth = 1f
         paint.color = Color.WHITE
@@ -105,28 +104,28 @@ class BasicToneView : View {
         val min = searchMin(frequencyArray)
         val currentHz = max * samplingRate / 2
         val minHz = min * samplingRate / 2
-        var h=0f
+        var h = 0f
         val t = 1 / max
         var hDraw = 1 / max
-            // if (max > 0.9) hDraw = 1 / max
+        // if (max > 0.9) hDraw = 1 / max
 
         if (realtimebolean && realTimeData.size > 4) {
-            val maxRealTime=searchMax(realTimeData)
-            if (maxRealTime<max) hDraw = 1 / max
+            val maxRealTime = searchMax(realTimeData)
+            if (maxRealTime < max) hDraw = 1 / max
             else hDraw = 1 / maxRealTime
 
-            if (realTimeData.size-4 >frameSize){
-                val startIndex=realTimeData.size-frameSize
-                val hrt = 1 / searchMaxDefIndex(realTimeData,startIndex)
-                val hfa = 1 / searchMaxDefIndex(frequencyArray,startIndex)
-                h = if (hrt<hfa) hrt
+            if (realTimeData.size - 4 > frameSize) {
+                val startIndex = realTimeData.size - frameSize
+                val hrt = 1 / searchMaxDefIndex(realTimeData, startIndex)
+                val hfa = 1 / searchMaxDefIndex(frequencyArray, startIndex)
+                h = if (hrt < hfa) hrt
                 else hfa
-                darwRealTimeMovement(canvas, width, height, h,startIndex)
-                darwEtalonMovement(canvas, width, height, h,startIndex)
-            }else   drawRealTime(canvas, width, height, hDraw)
+                darwRealTimeMovement(canvas, width, height, h, startIndex)
+                darwEtalonMovement(canvas, width, height, h, startIndex)
+            } else drawRealTime(canvas, width, height, hDraw)
         }
 
-        if (realTimeData.size-4<frameSize)  drawEtalon(canvas, width, height, hDraw)
+        if (realTimeData.size - 4 < frameSize) drawEtalon(canvas, width, height, hDraw)
 
         canvas.drawText("" + currentHz,
             rWidth + wColor.toFloat(),
@@ -145,33 +144,45 @@ class BasicToneView : View {
 //        }
     }
 
-    private fun darwRealTimeMovement(canvas: Canvas, width: Int, height: Int, h: Float, startIndex: Int) {
+    private fun darwRealTimeMovement(
+        canvas: Canvas,
+        width: Int,
+        height: Int,
+        h: Float,
+        startIndex: Int,
+    ) {
         var rtx1: Float = 0f
         var rty1: Float = (height * realTimeData[startIndex]) * h
         paint.color = Color.YELLOW
-        val widthSize=realTimeData.size-startIndex
+        val widthSize = realTimeData.size - startIndex
 
 
         for (p in startIndex until realTimeData.size) {
             val rty2 = (height * realTimeData[p]) * h
-            val rtx2 = width * (p-startIndex) / widthSize.toFloat()
+            val rtx2 = width * (p - startIndex) / widthSize.toFloat()
             canvas.drawLine(rtx1, height - rty1, rtx2, height - rty2, paint)
             rtx1 = rtx2
             rty1 = rty2
         }
     }
 
-    private fun darwEtalonMovement(canvas: Canvas, width: Int, height: Int, h: Float, startIndex: Int) {
-        paint.color=Color.WHITE
+    private fun darwEtalonMovement(
+        canvas: Canvas,
+        width: Int,
+        height: Int,
+        h: Float,
+        startIndex: Int,
+    ) {
+        paint.color = Color.WHITE
         var x1: Float = 0f
-        val widthSize=realTimeData.size-startIndex
+        val widthSize = realTimeData.size - startIndex
 
         var y1: Float = (height * frequencyArray[4]) * h
 
 
         for (i in startIndex until realTimeData.size) {
             val y2 = (height * frequencyArray[i]) * h
-            val x2 = width * (i-startIndex) / widthSize.toFloat()
+            val x2 = width * (i - startIndex) / widthSize.toFloat()
             canvas.drawLine(x1, height - y1, x2, height - y2, paint)
             x1 = x2
             y1 = y2

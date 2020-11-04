@@ -59,8 +59,8 @@ package com.example.kotlin_audioanalyzer.feature;
  * @author Hanns Holger Rutz
  */
 public class FFT_ {
-    float[] real;
-    float[] imag;
+    public float[] real;
+    public float[] imag;
 
     /**
      * Performs Fast Fourier Transformation in place.

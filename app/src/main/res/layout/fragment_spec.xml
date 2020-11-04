@@ -17,28 +17,38 @@
         app:layout_constraintRight_toRightOf="parent"
         tools:text="90"
         app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginTop="8dp"
-        app:layout_constraintHorizontal_bias="0.501"/>
+        android:layout_marginTop="8dp" />
 
     <SeekBar
         android:id="@+id/spec_seekBar"
-        android:layout_width="368dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:max="20"
+        android:layout_margin="30dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/spec_textView"/>
+        app:layout_constraintRight_toRightOf="parent" />
 
     <LinearLayout
+        android:id="@+id/spec_linearlayout"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginTop="50dp"
         android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/spec_seekBar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/spec_seekBar">
+        app:layout_constraintTop_toBottomOf="@+id/spec_textView">
+
+        <TextView
+            android:id="@+id/spec_tv_etalon"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:background="@color/colorWhite"
+            android:textColor="@color/colorBlack"
+            android:textStyle="bold"
+            android:text="Эталонный сигнал"/>
 
         <com.example.kotlin_audioanalyzer.View.FrameSpecView
             android:id="@+id/fram_spec_etalon_view"
@@ -46,6 +56,15 @@
             android:layout_height="0dp"
             android:layout_weight="0.5"
             android:background="@color/colorWhite" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:background="@color/colorWhite"
+            android:textColor="@color/colorBlack"
+            android:textStyle="bold"
+            android:text="Текущий сигнал"/>
 
         <com.example.kotlin_audioanalyzer.View.FrameSpecView
             android:id="@+id/fram_spec_current_view"

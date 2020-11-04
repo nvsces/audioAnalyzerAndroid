@@ -16,6 +16,10 @@
                 android:id="@+id/settings_menu_mfcc"
                 android:title="MFCC"
                 app:showAsAction="never" />
+            <item
+                android:id="@+id/settings_menu_sample"
+                android:title="Sample"
+                app:showAsAction="never" />
         </menu>
 
 
