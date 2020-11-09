@@ -10,6 +10,7 @@ import android.widget.Button
 import com.example.kotlin_audioanalyzer.R
 import com.example.kotlin_audioanalyzer.VoiceRecord
 import com.example.kotlin_audioanalyzer.feature.FFT_
+import com.example.kotlin_audioanalyzer.feature.hammingWindow
 import com.example.kotlin_audioanalyzer.feature.sonopy.FFT
 import com.example.kotlin_audioanalyzer.feature.sonopy.Sonopy
 import com.example.kotlin_audioanalyzer.utils.*
@@ -189,7 +190,8 @@ class InfoBufferFragment(var listBuffer: ArrayList<FloatArray>) :
         val arrayTon = FloatArray(overlapListBuffer.size)
 
         val absSpec = FloatArray(n / 2)
-        val fftTemp = FFT.rfft(overlapListBuffer[2], n)
+        val samplWindow= hammingWindow(overlapListBuffer[0])
+        val fftTemp = FFT.rfft(samplWindow, n)
         val re = fftTemp[0]
         val im = fftTemp[1]
         val magnitude: FloatArray = magnitudeSpec(re, im)
@@ -201,8 +203,9 @@ class InfoBufferFragment(var listBuffer: ArrayList<FloatArray>) :
 
         for (i in 1 until overlapListBuffer.size) {
             val temFFT = FloatArray(n / 2)
-            val tempRe = FFT.rfft(overlapListBuffer[i], n)[0]
-            val tempIm = FFT.rfft(overlapListBuffer[i], n)[1]
+            val tempSamplWindow= hammingWindow(overlapListBuffer[i])
+            val tempRe = FFT.rfft(tempSamplWindow, n)[0]
+            val tempIm = FFT.rfft(tempSamplWindow, n)[1]
             val mag: FloatArray = magnitudeSpec(tempRe, tempIm)
             System.arraycopy(mag, 0, temFFT, 0, re.size / 2)
             bufferFFTDataEtalon.add(temFFT)
